@@ -64,6 +64,15 @@ async def on_message(message):
         await message.channel.send(f'Hello {message.author.name}!')
     if "matcalc" in message.content.lower():
         await message.channel.send(f'https://material-calculator-for-genshin-impact.vercel.app/')
+    if "syllixa" in message.content.lower():
+        await message.channel.send(f'<@1199779674620952687> onee chan!')
+    if "fuck" in message.content.lower():
+        await message.channel.send(f'no cursing smh')
+    if "owned" in message.content.lower():
+        await message.channel.send(f'lol owned')
+    if "ping" in message.content.lower():
+        await message.channel.send(f'pong')
+    
 
 # Slash commands
 @bot.tree.command(name="hello", description="Say hello to the bot")

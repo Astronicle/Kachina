@@ -62,6 +62,8 @@ async def on_message(message):
         return
     if "hello" in message.content.lower():
         await message.channel.send(f'Hello {message.author.name}!')
+    if "matcalc" in message.content.lower():
+        await message.channel.send(f'https://material-calculator-for-genshin-impact.vercel.app/')
 
 # Slash commands
 @bot.tree.command(name="hello", description="Say hello to the bot")

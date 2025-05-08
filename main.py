@@ -70,8 +70,8 @@ async def on_message(message):
         await message.channel.send(f'no cursing smh')
     if "owned" in message.content.lower():
         await message.channel.send(f'lol owned')
-    if "ping" in message.content.lower():
-        await message.channel.send(f'pong')
+    # if "ping" in message.content.lower():
+    #     await message.channel.send(f'pong')
     
 
 # Slash commands
@@ -80,4 +80,4 @@ async def hello_command(interaction: discord.Interaction):
     await interaction.response.send_message(f"Hello, {interaction.user.mention}!")
 
 # Running the bot with the token from the environment variable
-bot.run(token, log_handler=handler, log_level=logging.DEBUG)
+bot.run(token)

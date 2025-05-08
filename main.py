@@ -3,6 +3,8 @@ from discord.ext import commands
 import os
 import logging
 from dotenv import load_dotenv
+from flask import Flask         #import Flask to create a web server
+import threading                #import threading to run Flask in a separate thread
 
 # Load environment variables from .env file
 load_dotenv()
@@ -10,6 +12,21 @@ load_dotenv()
 token = os.getenv('DISCORD_TOKEN')
 
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+
+# Flask app setup
+app = Flask(__name__)
+
+# Flask to provide a web server for the bot
+@app.route('/')
+def index():
+    return "Kachina Bot is running!"
+
+def run_flask():
+    port = int(os.environ.get("PORT", 4000))  
+    app.run(host="0.0.0.0", port=port)
+
+# Start Flask in a background thread
+threading.Thread(target=run_flask).start()
 
 # Enabling Intents
 intents = discord.Intents.default()

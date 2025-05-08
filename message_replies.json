@@ -1,6 +1,15 @@
 {
-    "hello": "Hello {message.author.name}!",
+    "hello": "hello {message.author.name}!",
     "matcalc": "https://material-calculator-for-genshin-impact.vercel.app/",
     "syllixa": "<@1199779674620952687> onee chan!",
-    "fuck":"fuck..? fuck.... new word learned :O"
+    "fuck":"fuck..? fuck.... new word learned :O",
+    "bitch":"bitch...whos that? do you mean me..?",
+    "furina":"did someone say furina :D",
+    "creator":"my creator is <@552000406281125889>!",
+    "luck":"why must you mention that...",
+    "eh":"eh indeed",
+    "kachina":"thats me!",
+    "deployed?":"deployment successfull- yeeeeee",
+    "who do you like":"i love <@1199779674620952687>! shes sometimes cold to me tho",
+    "i love you":"i love you too {message.author.name}!"
 }

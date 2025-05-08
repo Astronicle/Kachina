@@ -49,6 +49,13 @@ async def on_ready():
     commands = await bot.tree.fetch_commands()
     print(f"Registered commands: {[command.name for command in commands]}")
 
+
+# Prefix commands
+@bot.command(name="ping", help="Check the bot's latency")
+async def ping(ctx):
+    latency = round(bot.latency * 1000)
+    await ctx.send(f'Pong! {latency}ms')
+
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
@@ -56,7 +63,7 @@ async def on_message(message):
     if "hello" in message.content.lower():
         await message.channel.send(f'Hello {message.author.name}!')
 
-# Slash command
+# Slash commands
 @bot.tree.command(name="hello", description="Say hello to the bot")
 async def hello_command(interaction: discord.Interaction):
     await interaction.response.send_message(f"Hello, {interaction.user.mention}!")

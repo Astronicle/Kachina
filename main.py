@@ -5,6 +5,7 @@ import logging
 from dotenv import load_dotenv
 from flask import Flask         #import Flask to create a web server
 import threading                #import threading to run Flask in a separate thread
+import json
 
 # Load environment variables from .env file
 load_dotenv()
@@ -50,6 +51,10 @@ async def on_ready():
     print(f"Registered commands: {[command.name for command in commands]}")
 
 
+# Importing the message replies from the message_replies.json file
+with open('message_replies.json', 'r') as file:
+    data = json.load(file)
+
 # Prefix commands
 @bot.command(name="ping", help="Check the bot's latency")
 async def ping(ctx):
@@ -60,16 +65,10 @@ async def ping(ctx):
 async def on_message(message):
     if message.author == bot.user:
         return
-    if "hello" in message.content.lower():
-        await message.channel.send(f'Hello {message.author.name}!')
-    if "matcalc" in message.content.lower():
-        await message.channel.send(f'https://material-calculator-for-genshin-impact.vercel.app/')
-    if "syllixa" in message.content.lower():
-        await message.channel.send(f'<@1199779674620952687> onee chan!')
-    if "fuck" in message.content.lower():
-        await message.channel.send(f'no cursing smh')
-    if "owned" in message.content.lower():
-        await message.channel.send(f'lol owned')
+    for key, value in data.items():
+        if key in message.content.lower():
+            await message.channel.send(eval(f"f'{value}'"))
+            break
     # if "ping" in message.content.lower():
     #     await message.channel.send(f'pong')
     

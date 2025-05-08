@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from flask import Flask         #import Flask to create a web server
 import threading                #import threading to run Flask in a separate thread
 import json
+import time # to manage cooldowns
 
 # Load environment variables from .env file
 load_dotenv()
@@ -37,6 +38,8 @@ intents.members = True
 # Using the commands extension to create a bot instance
 bot = commands.Bot(command_prefix='!', intents = intents)
 
+cooldowns = {} # Dictionary to store cooldowns for each channel
+
 # Event handler for when the bot is ready
 @bot.event
 async def on_ready():
@@ -65,12 +68,22 @@ async def ping(ctx):
 async def on_message(message):
     if message.author == bot.user:
         return
+
+    await bot.process_commands(message)  # ensuring that commands work
+
+    # cooldown per channel (10 seconds)
+    now = time.time()
+    cooldown = 10  # seconds
+    last_sent = cooldowns.get(message.channel.id, 0)
+
+    if now - last_sent < cooldown:
+        return  #skipped
+
     for key, value in data.items():
         if key in message.content.lower():
             await message.channel.send(eval(f"f'{value}'"))
+            cooldowns[message.channel.id] = now
             break
-    # if "ping" in message.content.lower():
-    #     await message.channel.send(f'pong')
     
 
 # Slash commands

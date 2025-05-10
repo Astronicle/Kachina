@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-def get_image_after_infographic(name):
+def guide(name):
     try:
         # Define the URL
         url = f"https://keqingmains.com/{name}/"

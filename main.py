@@ -7,6 +7,9 @@ from flask import Flask         #import Flask to create a web server
 import threading                #import threading to run Flask in a separate thread
 import json
 import time # to manage cooldowns
+from character_scrape import guide
+
+
 
 # Load environment variables from .env file
 load_dotenv()
@@ -14,6 +17,9 @@ load_dotenv()
 token = os.getenv('DISCORD_TOKEN')
 
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+
+
+
 
 # Flask app setup
 app = Flask(__name__)
@@ -30,6 +36,9 @@ def run_flask():
 # Start Flask in a background thread
 threading.Thread(target=run_flask).start()
 
+
+
+
 # Enabling Intents
 intents = discord.Intents.default()
 intents.message_content = True
@@ -39,6 +48,10 @@ intents.members = True
 bot = commands.Bot(command_prefix='!', intents = intents)
 
 cooldowns = {} # Dictionary to store cooldowns for each channel
+
+
+
+
 
 # Event handler for when the bot is ready
 @bot.event
@@ -54,9 +67,17 @@ async def on_ready():
     print(f"Registered commands: {[command.name for command in commands]}")
 
 
+
+
+
+
 # Importing the message replies from the message_replies.json file
 with open('message_replies.json', 'r') as file:
     data = json.load(file)
+
+
+
+
 
 # Prefix commands
 @bot.command(name="ping", help="Check the bot's latency")
@@ -64,6 +85,15 @@ async def ping(ctx):
     latency = round(bot.latency * 1000)
     await ctx.send(f'Pong! {latency}ms')
 
+@bot.command()
+async def character(ctx, *, name: str):
+    url = guide(name)
+    await ctx.send(f"Character: {name}\nGuide: {url}")
+
+
+
+
+# message event to respond to specific messages
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
@@ -85,6 +115,10 @@ async def on_message(message):
             cooldowns[message.channel.id] = now
             break
     
+
+
+
+
 
 # Slash commands
 @bot.tree.command(name="hello", description="Say hello to the bot")

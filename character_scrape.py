@@ -20,7 +20,7 @@ def guide(name):
         # Find the 'Infographic' header by checking for the exact text
         infographic_header = None
         for h1 in h1_tags:
-            if h1.get_text(strip=True) == "Infographic":
+            if h1.get_text(strip=True) == "Infographic" or h1.get_text(strip=True) == "TL;DR":
                 infographic_header = h1
                 break
         

@@ -1,9 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 
-def guide(url):
+def guide(name):
     try:
         # Fetch the page
+        url = f"https://keqingmains.com/{name}/"
         response = requests.get(url)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')

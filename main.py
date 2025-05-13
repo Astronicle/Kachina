@@ -82,11 +82,6 @@ async def ping(ctx):
     latency = round(bot.latency * 1000)
     await ctx.send(f'Pong! {latency}ms')
 
-@bot.command(name="help", help="List all commands")
-async def help_command(ctx):
-    commands_list = [f"{command.name}: {command.help}" for command in bot.commands]
-    await ctx.send("Available commands:\n" + "\n".join(commands_list))
-
 @bot.command(name="info", help="Get information about the bot")
 async def info(ctx):
     info_message = (
@@ -97,12 +92,12 @@ async def info(ctx):
     )
     await ctx.send(info_message)
 
-@bot.command()
+@bot.command(name="character", help="Get character guide for specified Genshin character")
 async def character(ctx, *, name: str):
     url = guide(name)
     await ctx.send(f"Character: {name}\nGuide: {url}")
 
-@bot.command()
+@bot.command(name="code", help="Get the Genshin code redeem link")
 async def code(ctx, *, code: str):
     code_url = f"https://genshin.hoyoverse.com/en/gift?code={code}"
     await ctx.send(code_url)

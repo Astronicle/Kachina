@@ -90,6 +90,11 @@ async def character(ctx, *, name: str):
     url = guide(name)
     await ctx.send(f"Character: {name}\nGuide: {url}")
 
+@bot.command()
+async def code(ctx, *, code: str):
+    code_url = f"https://genshin.hoyoverse.com/en/gift?code={code}"
+    await ctx.send(code_url)
+
 
 
 

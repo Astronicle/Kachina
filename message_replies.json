@@ -11,5 +11,7 @@
     "kachina":"thats me!",
     "deployed?":"deployment successful- yeeeeee",
     "who do you like":"i love <@1199779674620952687>! shes sometimes cold to me tho",
-    "i love you":"i love you too {message.author.name}!"
+    "i love you":"i love you too {message.author.name}!",
+    "gm":"morning <@{message.author.id}>!",
+    "gn":"good night <@{message.author.id}>!"
 }

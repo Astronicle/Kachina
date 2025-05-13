@@ -116,7 +116,6 @@ async def on_message(message):
     for key, value in data.items():
         if key in message.content.lower():
             await message.channel.send(eval(f"f'{value}'"))
-            cooldowns[message.channel.id] = now
             break
     
 

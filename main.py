@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 from flask import Flask         #import Flask to create a web server
 import threading                #import threading to run Flask in a separate thread
 import json
-import time # to manage cooldowns
 from character_scrape import guide
 
 
@@ -47,8 +46,6 @@ intents.members = True
 # Using the commands extension to create a bot instance
 bot = commands.Bot(command_prefix='!', intents = intents)
 
-cooldowns = {} # Dictionary to store cooldowns for each channel
-
 
 
 
@@ -85,6 +82,21 @@ async def ping(ctx):
     latency = round(bot.latency * 1000)
     await ctx.send(f'Pong! {latency}ms')
 
+@bot.command(name="help", help="List all commands")
+async def help_command(ctx):
+    commands_list = [f"{command.name}: {command.help}" for command in bot.commands]
+    await ctx.send("Available commands:\n" + "\n".join(commands_list))
+
+@bot.command(name="info", help="Get information about the bot")
+async def info(ctx):
+    info_message = (
+        f"Bot Name: {bot.user.name}\n"
+        f"Bot ID: {bot.user.id}\n"
+        f"Bot Latency: {round(bot.latency * 1000)}ms\n"
+        f"Prefix: {bot.command_prefix}"
+    )
+    await ctx.send(info_message)
+
 @bot.command()
 async def character(ctx, *, name: str):
     url = guide(name)
@@ -106,14 +118,6 @@ async def on_message(message):
 
     await bot.process_commands(message)  # ensuring that commands work
 
-    # cooldown per channel (10 seconds)
-    now = time.time()
-    cooldown = 10  # seconds
-    last_sent = cooldowns.get(message.channel.id, 0)
-
-    if now - last_sent < cooldown:
-        return  #skipped
-
     for key, value in data.items():
         if key in message.content.lower():
             await message.channel.send(eval(f"f'{value}'"))
@@ -129,6 +133,8 @@ async def on_message(message):
 @bot.tree.command(name="hello", description="Say hello to the bot")
 async def hello_command(interaction: discord.Interaction):
     await interaction.response.send_message(f"Hello, {interaction.user.mention}!")
+
+
 
 # Running the bot with the token from the environment variable
 bot.run(token)

@@ -102,6 +102,16 @@ async def code(ctx, *, code: str):
     code_url = f"https://genshin.hoyoverse.com/en/gift?code={code}"
     await ctx.send(code_url)
 
+@bot.command(name="pfp", help="Get the profile picture of a user by their ID")
+async def pfp(ctx, user_id: int):
+    user = await bot.fetch_user(user_id)
+    if user:
+        embed = discord.Embed(title=f"{user.name}'s Profile Picture", color=discord.Color.blue())
+        embed.set_image(url=user.avatar.url)
+        await ctx.send(embed=embed)
+    else:
+        await ctx.send("User not found.")
+
 
 
 

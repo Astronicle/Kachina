@@ -13,7 +13,7 @@ def guide(name):
 
         for tag in header_tags:
             tag_text = tag.get_text(strip=True)
-            if tag_text in ["Infographic", "TL;DR"]:
+            if tag_text in ["Infographic", "TL;DR","support"]:
                 figure = tag.find_next('figure')
                 if figure:
                     img = figure.find('img')

@@ -112,6 +112,15 @@ async def pfp(ctx, user_id: int):
     else:
         await ctx.send("User not found.")
 
+@bot.command(name="say", help="Send a message to a specific channel")
+async def say(ctx, channel_id: int, *, message: str):
+    channel = bot.get_channel(channel_id)
+    if channel:
+        await channel.send(message)
+        await ctx.send(f"Message sent to {channel.mention}")
+    else:
+        await ctx.send("Channel not found.")
+
 
 
 

@@ -1,9 +1,17 @@
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
 
 def guide(name):
     def fetch_image_from_url(url):
-        response = requests.get(url)
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/114.0.0.0 Safari/537.36"
+            )
+        }
+        response = requests.get(url, headers=headers)
         response.raise_for_status()
 
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -13,12 +21,13 @@ def guide(name):
 
         for tag in header_tags:
             tag_text = tag.get_text(strip=True)
-            if tag_text in ["Infographic", "TL;DR","Support"]:
+            if tag_text in ["Infographic", "TL;DR", "Support"]:
                 figure = tag.find_next('figure')
                 if figure:
                     img = figure.find('img')
                     if img and img.get('src'):
-                        return img['src']
+                        # Handle relative URLs
+                        return urljoin(url, img['src'])
                 break
 
         return None

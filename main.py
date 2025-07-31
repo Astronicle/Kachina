@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from flask import Flask         #import Flask to create a web server
 import threading                #import threading to run Flask in a separate thread
 import json
+from datetime import timedelta #for timer functionality
 from character_scrape import guide
 
 
@@ -147,7 +148,7 @@ async def timer(ctx, duration: str):
 
         await ctx.send(f"Timer set for {duration}. I will ping you when the time is up!")
 
-        await discord.utils.sleep_until(discord.utils.utcnow() + discord.timedelta(seconds=total_seconds))
+        await discord.utils.sleep_until(discord.utils.utcnow() + timedelta(seconds=total_seconds))
         await ctx.send(f"{ctx.author.mention}, your timer for {duration} is up!")
     except Exception as e:
         await ctx.send(f"An error occurred while setting the timer: {e}")

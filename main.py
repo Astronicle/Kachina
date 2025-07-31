@@ -121,7 +121,36 @@ async def say(ctx, channel_id: int, *, message: str):
     else:
         await ctx.send("Channel not found.")
 
+# command to set timer by acceprting a time and pinging the user when the time is up. accepts time in days, hours, minutes, and seconds
+@bot.command(name="timer", help="Set a timer for a specified duration")
+async def timer(ctx, duration: str):
+    try:
+        # Parse the duration string
+        time_parts = duration.split(':')
+        if len(time_parts) == 4:  # days:hours:minutes:seconds
+            days, hours, minutes, seconds = map(int, time_parts)
+        elif len(time_parts) == 3:  # hours:minutes:seconds
+            days, hours, minutes, seconds = 0, *map(int, time_parts)
+        elif len(time_parts) == 2:  # minutes:seconds
+            days, hours, minutes, seconds = 0, 0, *map(int, time_parts)
+        elif len(time_parts) == 1:  # seconds
+            days, hours, minutes, seconds = 0, 0, 0, int(time_parts[0])
+        else:
+            await ctx.send("Invalid duration format. Use 'days:hours:minutes:seconds' or 'hours:minutes:seconds' or 'minutes:seconds' or 'seconds'.")
+            return
 
+        total_seconds = days * 86400 + hours * 3600 + minutes * 60 + seconds
+
+        if total_seconds <= 0:
+            await ctx.send("Please provide a positive duration.")
+            return
+
+        await ctx.send(f"Timer set for {duration}. I will ping you when the time is up!")
+
+        await discord.utils.sleep_until(discord.utils.utcnow() + discord.timedelta(seconds=total_seconds))
+        await ctx.send(f"{ctx.author.mention}, your timer for {duration} is up!")
+    except Exception as e:
+        await ctx.send(f"An error occurred while setting the timer: {e}")
 
 
 # message event to respond to specific messages

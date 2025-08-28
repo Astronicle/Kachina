@@ -20,7 +20,7 @@ def guide(name):
         meta_tags = soup.find_all('meta')
 
         for tag in meta_tags:
-            tag_prop = tag['property']
+            tag_prop = tag.get('property')
             if tag_prop == 'og:image':
                 return tag['content']
 

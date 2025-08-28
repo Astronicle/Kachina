@@ -16,24 +16,18 @@ def guide(name):
 
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        # Search all headers: h1, h2, h3
-        header_tags = soup.find_all(['h1', 'h2', 'h3'])
+        # Search all meta tags
+        meta_tags = soup.find_all('meta')
 
-        for tag in header_tags:
-            tag_text = tag.get_text(strip=True)
-            if tag_text in ["Infographic", "TL;DR", "Support"]:
-                figure = tag.find_next('figure')
-                if figure:
-                    img = figure.find('img')
-                    if img and img.get('src'):
-                        # Handle relative URLs
-                        return urljoin(url, img['src'])
-                break
+        for tag in meta_tags:
+            tag_prop = tag['property']
+            if tag_prop == 'og:image':
+                return tag['content']
 
         return None
 
     # main and fallback URLs
-    main_url = f"https://keqingmains.com/{name}/"
+    main_url = f"https://kqm.gg/i/{name}/"
     fallback_url = f"https://keqingmains.com/q/{name}-quickguide/"
 
     try:

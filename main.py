@@ -173,6 +173,17 @@ async def on_message(message):
         embed.set_thumbnail(url=message.author.avatar.url if message.author.avatar else discord.Embed.Empty)
         await message.channel.send(embed=embed)
         return  # Optional: skip JSON replies for this message
+    
+    if message.content.lower() in ["wuv you"]:
+        embed = discord.Embed(
+            title="wuv",
+            description="you too",
+            color=discord.Color.green()
+        )
+        embed.set_footer(text="a lot...")
+        embed.set_thumbnail(url=message.author.avatar.url if message.author.avatar else discord.Embed.Empty)
+        await message.channel.send(embed=embed)
+        return  # Optional: skip JSON replies for this message
 
     # Check for message replies in message_replies.json
     for key, value in data.items():

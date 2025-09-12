@@ -26,4 +26,4 @@ def guide(name):
     # fallback_url = f"https://keqingmains.com/q/{name}-quickguide/"
 
     return fetch_image_from_url(main_url)
-# print(guide("nahida"))
+print(guide("nahida"))

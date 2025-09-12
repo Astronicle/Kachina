@@ -162,6 +162,19 @@ async def on_message(message):
 
     await bot.process_commands(message)  # ensuring that commands work
 
+    # Respond with an embed to "I'm new here"
+    if message.content.lower() in ["i'm new here", "im new here", "im new", "new here"]:
+        embed = discord.Embed(
+            title="🎉 Welcome!",
+            description="We're glad you're here! Feel free to ask questions or just hang out. 😊",
+            color=discord.Color.green()
+        )
+        embed.set_footer(text="Welcome Bot • Kachina")
+        embed.set_thumbnail(url=message.author.avatar.url if message.author.avatar else discord.Embed.Empty)
+        await message.channel.send(embed=embed)
+        return  # Optional: skip JSON replies for this message
+
+    # Check for message replies in message_replies.json
     for key, value in data.items():
         if key in message.content.lower():
             await message.channel.send(eval(f"f'{value}'"))

@@ -186,12 +186,15 @@ async def on_presence_update(before, after):
     current_status = str(after.status)
 
     if previous_status == 'offline' and current_status in ['online', 'idle', 'dnd']:
+        time_offline = now - since_timestamp
+        offline_duration = str(timedelta(seconds=time_offline))
         embed = discord.Embed(
             title="User Online",
             description=(
                 f"{after.mention} is now **online**!\n\n"
                 f"**Since:** <t:{now}:f>\n"
-                f"**Relative:** <t:{now}:R>"
+                f"**Relative:** <t:{now}:R>\n"
+                f"**Offline for:** {offline_duration}"
             ),
             color=discord.Color.green()
         )
@@ -203,7 +206,7 @@ async def on_presence_update(before, after):
         embed = discord.Embed(
             title="User Offline",
             description=(
-                f"{after.mention} has gone **offline**.\n\n"
+                f"{after.mention} has gone **offline**!\n\n"
                 f"**Since:** <t:{now}:f>\n"
                 f"**Relative:** <t:{now}:R>\n"
                 f"**For how long:** <t:{since_timestamp}:R> → <t:{now}:R>"

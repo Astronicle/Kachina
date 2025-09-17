@@ -159,49 +159,44 @@ previous_presence = {}
 
 @bot.event
 async def on_presence_update(before, after):
-    # User ID you want to track
     user_to_track = 552000406281125889  # Replace with actual user ID
 
-    if after.user.id != user_to_track:
+    if after.id != user_to_track:
         return
 
-    if after.user.bot:
+    if after.bot:
         return
 
-    channel_id = 1417741299573985320  # Replace with your channel ID
+    channel_id = 1417741299573985320
     channel = bot.get_channel(channel_id)
 
     if not channel:
         return
 
-    # Get previous status (default: offline)
-    previous_status = previous_presence.get(after.user.id, "offline")
+    previous_status = previous_presence.get(after.id, 'offline')
     current_status = str(after.status)
 
-    # User went online
-    if previous_status == "offline" and current_status in ["online", "idle", "dnd"]:
+    if previous_status == 'offline' and current_status in ['online', 'idle', 'dnd']:
         embed = discord.Embed(
             title="User Online",
-            description=f"{after.user.mention} is now online!",
+            description=f"{after.mention} is now online!",
             color=discord.Color.green()
         )
-        embed.set_thumbnail(url=after.user.avatar.url if after.user.avatar else None)
-        embed.set_footer(text=f"User ID: {after.user.id}")
+        embed.set_thumbnail(url=after.avatar.url if after.avatar else discord.Embed.Empty)
+        embed.set_footer(text=f"User ID: {after.id}")
         await channel.send(embed=embed)
 
-    # User went offline
-    elif previous_status in ["online", "idle", "dnd"] and current_status == "offline":
+    elif previous_status in ['online', 'idle', 'dnd'] and current_status == 'offline':
         embed = discord.Embed(
             title="User Offline",
-            description=f"{after.user.mention} has gone offline.",
+            description=f"{after.mention} has gone offline.",
             color=discord.Color.red()
         )
-        embed.set_thumbnail(url=after.user.avatar.url if after.user.avatar else None)
-        embed.set_footer(text=f"User ID: {after.user.id}")
+        embed.set_thumbnail(url=after.avatar.url if after.avatar else discord.Embed.Empty)
+        embed.set_footer(text=f"User ID: {after.id}")
         await channel.send(embed=embed)
 
-    # Update status
-    previous_presence[after.user.id] = current_status
+    previous_presence[after.id] = current_status
 
 
 

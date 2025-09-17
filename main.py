@@ -43,6 +43,7 @@ threading.Thread(target=run_flask).start()
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
+intents.presences = True
 
 # Using the commands extension to create a bot instance
 bot = commands.Bot(command_prefix='!', intents = intents)
@@ -63,7 +64,6 @@ async def on_ready():
         print(f"Failed to sync commands: {e}")
     commands = await bot.tree.fetch_commands()
     print(f"Registered commands: {[command.name for command in commands]}")
-
 
 
 
@@ -154,6 +154,59 @@ async def timer(ctx, duration: str):
         await ctx.send(f"An error occurred while setting the timer: {e}")
 
 
+# Dictionary to store the previous presence status of users
+previous_presence = {}
+
+@bot.event
+async def on_presence_update(before, after):
+    # User ID you want to track
+    user_to_track = 552000406281125889  # Replace with actual user ID
+
+    if after.user.id != user_to_track:
+        return
+
+    if after.user.bot:
+        return
+
+    channel_id = 1417741299573985320  # Replace with your channel ID
+    channel = bot.get_channel(channel_id)
+
+    if not channel:
+        return
+
+    # Get previous status (default: offline)
+    previous_status = previous_presence.get(after.user.id, "offline")
+    current_status = str(after.status)
+
+    # User went online
+    if previous_status == "offline" and current_status in ["online", "idle", "dnd"]:
+        embed = discord.Embed(
+            title="User Online",
+            description=f"{after.user.mention} is now online!",
+            color=discord.Color.green()
+        )
+        embed.set_thumbnail(url=after.user.avatar.url if after.user.avatar else None)
+        embed.set_footer(text=f"User ID: {after.user.id}")
+        await channel.send(embed=embed)
+
+    # User went offline
+    elif previous_status in ["online", "idle", "dnd"] and current_status == "offline":
+        embed = discord.Embed(
+            title="User Offline",
+            description=f"{after.user.mention} has gone offline.",
+            color=discord.Color.red()
+        )
+        embed.set_thumbnail(url=after.user.avatar.url if after.user.avatar else None)
+        embed.set_footer(text=f"User ID: {after.user.id}")
+        await channel.send(embed=embed)
+
+    # Update status
+    previous_presence[after.user.id] = current_status
+
+
+
+
+
 # message event to respond to specific messages
 @bot.event
 async def on_message(message):
@@ -190,9 +243,7 @@ async def on_message(message):
         if key in message.content.lower():
             await message.channel.send(eval(f"f'{value}'"))
             break
-    
-
-
+            
 
 
 

@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import os
+import time
 import logging
 from dotenv import load_dotenv
 from flask import Flask         #import Flask to create a web server
@@ -154,12 +155,13 @@ async def timer(ctx, duration: str):
         await ctx.send(f"An error occurred while setting the timer: {e}")
 
 
-# Dictionary to store the previous presence status of users
+# Dictionary to store the previous presence status of users and timestamp
+# Structure: {user_id: {"status": str, "since": int}}
 previous_presence = {}
 
 @bot.event
 async def on_presence_update(before, after):
-    user_to_track = 552000406281125889  # Replace with actual user ID
+    user_to_track = 1199779674620952687  # Replace with actual user ID
 
     if after.id != user_to_track:
         return
@@ -173,13 +175,24 @@ async def on_presence_update(before, after):
     if not channel:
         return
 
-    previous_status = previous_presence.get(after.id, 'offline')
+    # Current timestamp (Unix)
+    now = int(time.time())
+
+    # Get previous status & timestamp
+    prev_data = previous_presence.get(after.id, {"status": "offline", "since": now})
+    previous_status = prev_data["status"]
+    since_timestamp = prev_data["since"]
+
     current_status = str(after.status)
 
     if previous_status == 'offline' and current_status in ['online', 'idle', 'dnd']:
         embed = discord.Embed(
             title="User Online",
-            description=f"{after.mention} is now online!",
+            description=(
+                f"{after.mention} is now **online**!\n\n"
+                f"**Since:** <t:{now}:f>\n"
+                f"**Relative:** <t:{now}:R>"
+            ),
             color=discord.Color.green()
         )
         embed.set_thumbnail(url=after.avatar.url if after.avatar else discord.Embed.Empty)
@@ -189,14 +202,20 @@ async def on_presence_update(before, after):
     elif previous_status in ['online', 'idle', 'dnd'] and current_status == 'offline':
         embed = discord.Embed(
             title="User Offline",
-            description=f"{after.mention} has gone offline.",
+            description=(
+                f"{after.mention} has gone **offline**.\n\n"
+                f"**Since:** <t:{now}:f>\n"
+                f"**Relative:** <t:{now}:R>\n"
+                f"**For how long:** <t:{since_timestamp}:R> → <t:{now}:R>"
+            ),
             color=discord.Color.red()
         )
         embed.set_thumbnail(url=after.avatar.url if after.avatar else discord.Embed.Empty)
         embed.set_footer(text=f"User ID: {after.id}")
         await channel.send(embed=embed)
 
-    previous_presence[after.id] = current_status
+    # Save current status + timestamp
+    previous_presence[after.id] = {"status": current_status, "since": now}
 
 
 

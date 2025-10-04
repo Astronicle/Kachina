@@ -96,8 +96,17 @@ async def info(ctx):
 
 @bot.command(name="character", help="Get character guide for specified Genshin character")
 async def character(ctx, *, name: str):
-    url = guide(name)
-    await ctx.send(f"Character: {name}\nGuide: {url}")
+    url = guide(name.strip())  # your scraper function
+    if url:
+        embed = discord.Embed(
+            title=f"{name.capitalize()} Guide",
+            description=f"Guide: {name.capitalize()}",
+            color=discord.Color.blue()
+        )
+        embed.set_image(url=url)  # This displays the image in the embed
+        await ctx.send(embed=embed)
+    else:
+        await ctx.send(f"❌ Could not find a guide for '{name}'.")
 
 @bot.command(name="code", help="Get the Genshin code redeem link")
 async def code(ctx, *, code: str):

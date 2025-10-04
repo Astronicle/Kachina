@@ -1,3 +1,6 @@
+from bs4 import BeautifulSoup
+import requests
+
 def guide(name):
     def fetch_image_from_url(url):
         headers = {

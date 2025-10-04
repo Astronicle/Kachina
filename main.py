@@ -123,7 +123,7 @@ async def say(ctx, channel_id: int, *, message: str):
     else:
         await ctx.send("Channel not found.")
 
-# command to set timer by acceprting a time and pinging the user when the time is up. accepts time in days, hours, minutes, and seconds
+# command to set timer by accepting a time and pinging the user when the time is up. accepts time in days, hours, minutes, and seconds
 @bot.command(name="timer", help="Set a timer for a specified duration")
 async def timer(ctx, duration: str):
     try:
@@ -181,20 +181,16 @@ async def on_presence_update(before, after):
     # Get previous status & timestamp
     prev_data = previous_presence.get(after.id, {"status": "offline", "since": now})
     previous_status = prev_data["status"]
-    since_timestamp = prev_data["since"]
 
     current_status = str(after.status)
 
     if previous_status == 'offline' and current_status in ['online', 'idle', 'dnd']:
-        time_offline = now - since_timestamp
-        offline_duration = str(timedelta(seconds=time_offline))
         embed = discord.Embed(
             title="User Online",
             description=(
                 f"{after.mention} is now **online**!\n\n"
                 f"**Since:** <t:{now}:f>\n"
                 f"**Relative:** <t:{now}:R>\n"
-                f"**Offline for:** {offline_duration}"
             ),
             color=discord.Color.green()
         )
@@ -209,7 +205,6 @@ async def on_presence_update(before, after):
                 f"{after.mention} has gone **offline**!\n\n"
                 f"**Since:** <t:{now}:f>\n"
                 f"**Relative:** <t:{now}:R>\n"
-                f"**For how long:** <t:{since_timestamp}:R> → <t:{now}:R>"
             ),
             color=discord.Color.red()
         )

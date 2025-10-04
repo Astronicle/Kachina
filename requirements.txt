@@ -3,3 +3,4 @@ python-dotenv
 Flask
 beautifulsoup4
 requests
+cloudscraper

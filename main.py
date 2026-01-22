@@ -7,9 +7,14 @@ from dotenv import load_dotenv
 from flask import Flask         #import Flask to create a web server
 import threading                #import threading to run Flask in a separate thread
 import json
-from datetime import timedelta #for timer functionality
+from datetime import timedelta, datetime #for timer functionality
+import asyncio # Import asyncio for scheduling
 from character_scrape import guide
 
+
+
+# List to hold scheduled tasks
+scheduled_messages = []
 
 
 # Load environment variables from .env file
@@ -31,8 +36,8 @@ def index():
     return "Kachina Bot is running!"
 
 def run_flask():
-    port = int(os.environ.get("PORT", 4000))  
-    app.run(host="0.0.0.0", port=port, threaded=True)
+    port = int(os.environ.get("PORT", 4000))
+    app.run(host="0.0.00", port=port, threaded=True)
 
 # Start Flask in a background thread
 threading.Thread(target=run_flask).start()
@@ -163,11 +168,57 @@ async def timer(ctx, duration: str):
     except Exception as e:
         await ctx.send(f"An error occurred while setting the timer: {e}")
 
+@bot.command(name="schedule", help="Schedule a message to be sent at a specific Unix timestamp in a channel.")
+async def schedule(ctx, timestamp: int, channel_id: int, *, message: str):
+    """
+    Schedules a message to be sent to a specific channel at a given Unix timestamp.
+    Usage: !schedule <unix_timestamp> <channel_id> <message>
+    Example: !schedule 1769081220 123456789012345678 "Hello from the future!"
+    """
+    try:
+        scheduled_time = datetime.fromtimestamp(timestamp)
+        now = datetime.now()
+
+        if scheduled_time < now:
+            await ctx.send("The provided timestamp is in the past. Please provide a future timestamp.")
+            return
+
+        # Calculate time difference to sleep
+        time_difference = scheduled_time - now
+        await ctx.send(f"Message scheduled for <t:{timestamp}:f> in <#{channel_id}>. I will send it then!")
+
+        async def send_scheduled_message():
+            await discord.utils.sleep_until(scheduled_time)
+            channel = bot.get_channel(channel_id)
+            if channel:
+                try:
+                    await channel.send(message)
+                    print(f"Sent scheduled message to {channel.name} at {scheduled_time}: {message}")
+                except discord.Forbidden:
+                    print(f"Bot does not have permissions to send message in channel {channel.name} ({channel_id}).")
+                    # Optionally, inform the user who scheduled the message
+                    # await ctx.author.send(f"Could not send your scheduled message to <#{channel_id}> due to permission issues.")
+                except Exception as e:
+                    print(f"Error sending scheduled message: {e}")
+            else:
+                print(f"Channel {channel_id} not found for scheduled message.")
+                # Optionally, inform the user who scheduled the message
+                # await ctx.author.send(f"The channel <#{channel_id}> for your scheduled message was not found.")
+
+        # Schedule the task
+        task = bot.loop.create_task(send_scheduled_message())
+        scheduled_messages.append(task) # Store the task if we want to cancel it later, for now, just append
+        print(f"Scheduled message task created for {scheduled_time}")
+
+    except ValueError:
+        await ctx.send("Invalid timestamp. Please provide a valid Unix timestamp (e.g., 1769081220).")
+    except Exception as e:
+        await ctx.send(f"An error occurred while scheduling the message: {e}")
+
 
 # Dictionary to store the previous presence status of users and timestamp
 # Structure: {user_id: {"status": str, "since": int}}
 previous_presence = {}
-
 @bot.event
 async def on_presence_update(before, after):
     user_to_track = 1199779674620952687  # Replace with actual user ID

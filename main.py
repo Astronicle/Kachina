@@ -37,7 +37,7 @@ def index():
 
 def run_flask():
     port = int(os.environ.get("PORT", 4000))
-    app.run(host="0.0.00", port=port, threaded=True)
+    app.run(host="0.0.0.0", port=port, threaded=True)
 
 # Start Flask in a background thread
 threading.Thread(target=run_flask).start()

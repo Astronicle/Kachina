@@ -36,4 +36,4 @@ def guide(name):
         return f"💥 Exception occurred: {type(e).__name__} - {e}"
 
 # Example test
-print(guide("Nahida"))
+# print(guide("Nahida"))
